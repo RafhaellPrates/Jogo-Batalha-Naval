@@ -13,6 +13,12 @@ int main() {
     int navio2Linha = 5;
     int navio2Coluna = 7;
 
+    int navio3Linha = 0;
+    int navio3Coluna = 0;
+
+    int navio4Linha = 3;
+    int navio4Coluna = 7;
+
     // Inicializa o tabuleiro com água
     for(int i = 0; i < tamanhoTabuleiro; i++){
         for(int j = 0; j < tamanhoTabuleiro; j++){
@@ -27,6 +33,22 @@ int main() {
     }
     if (navio2Linha + tamanhoNavio > tamanhoTabuleiro) {
         printf("Erro: Navio 2 está fora do limite.\n");
+        return 1;
+    }
+
+    if (navio3Linha + tamanhoNavio > tamanhoTabuleiro) {
+        printf("Erro: Navio 3 está fora do limite.\n");
+        return 1;
+    } else if (navio3Coluna + tamanhoNavio > tamanhoTabuleiro) {
+        printf("Erro: Navio 3 está fora do limite.\n");
+        return 1;
+    }
+
+    if (navio4Linha + tamanhoNavio > tamanhoTabuleiro) {
+        printf("Erro: Navio 4 está fora do limite.\n");
+        return 1;
+    } else if (navio4Coluna + tamanhoNavio > tamanhoTabuleiro) {
+        printf("Erro: Navio 4 está fora do limite.\n");
         return 1;
     }
 
@@ -48,6 +70,33 @@ int main() {
         tabuleiro[navio2Linha + i][navio2Coluna] = 3;
     }
 
+    // Verifica sobreposição antes de posicionar na diagonal principal
+    for (int i = 0; i < tamanhoNavio; i++) {
+        if (tabuleiro[navio3Linha + i][navio3Coluna - i] == 3) {
+        printf("Erro: Navio 3 sobrepõe outro Navio.\n");
+        return 1;
+     }
+    }
+
+    //posiciona o navio na diagonal principal
+    for (int i = 0; i < tamanhoNavio; i++) {
+        tabuleiro[navio3Linha + i][navio3Coluna + i] = 3;
+    }
+
+    // Verifica sobreposição antes de posicionar
+    for (int i = 0; i < tamanhoNavio; i++) {
+        if (tabuleiro[navio4Linha + i][navio4Coluna - i] == 3) {
+        printf("Erro: Navio 4 sobrepõe outro Navio.\n");
+        return 1;
+     }
+    }
+
+    //posiciona o navio na diagonal secundaria
+    for (int i = 0; i < tamanhoNavio; i++) {
+        tabuleiro[navio4Linha + i][navio4Coluna - i] = 3;
+    }
+
+    
     printf("\n======= TABULEIRO BATALHA NAVAL =======\n\n");
 
     // Cabeçalho com letras A-J
