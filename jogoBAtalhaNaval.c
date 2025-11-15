@@ -1,121 +1,118 @@
 #include <stdio.h>
 
-int main() {
+#define TAM 10
+#define TAM_NAVIO 3
 
-    int tamanhoTabuleiro = 10;
-    int tamanhoNavio = 3;
+// 0 = água
+// 3 = navio
+// 2 = área atacada sem acerto
+// 1 = acerto no navio
 
-    int tabuleiro[10][10];
+int tabuleiro[TAM][TAM] = {0};
 
-    int navio1Linha = 2;
-    int navio1Coluna = 4;
-
-    int navio2Linha = 5;
-    int navio2Coluna = 7;
-
-    int navio3Linha = 0;
-    int navio3Coluna = 0;
-
-    int navio4Linha = 3;
-    int navio4Coluna = 7;
-
-    // Inicializa o tabuleiro com água
-    for(int i = 0; i < tamanhoTabuleiro; i++){
-        for(int j = 0; j < tamanhoTabuleiro; j++){
-            tabuleiro[i][j] = 0;
-        }
-    }
-
-    // Valida limites dos navios
-    if (navio1Coluna + tamanhoNavio > tamanhoTabuleiro) {
-        printf("Erro: Navio 1 está fora do limite.\n");
-        return 1;
-    }
-    if (navio2Linha + tamanhoNavio > tamanhoTabuleiro) {
-        printf("Erro: Navio 2 está fora do limite.\n");
-        return 1;
-    }
-
-    if (navio3Linha + tamanhoNavio > tamanhoTabuleiro) {
-        printf("Erro: Navio 3 está fora do limite.\n");
-        return 1;
-    } else if (navio3Coluna + tamanhoNavio > tamanhoTabuleiro) {
-        printf("Erro: Navio 3 está fora do limite.\n");
-        return 1;
-    }
-
-    if (navio4Linha + tamanhoNavio > tamanhoTabuleiro) {
-        printf("Erro: Navio 4 está fora do limite.\n");
-        return 1;
-    } else if (navio4Coluna + tamanhoNavio > tamanhoTabuleiro) {
-        printf("Erro: Navio 4 está fora do limite.\n");
-        return 1;
-    }
-
-    // Posiciona navio horizontal
-    for (int i = 0; i < tamanhoNavio; i++) {
-        tabuleiro[navio1Linha][navio1Coluna + i] = 3;
-    }
-
-    // Verifica sobreposição do navio 2
-    for (int i = 0; i < tamanhoNavio; i++) {
-        if (tabuleiro[navio2Linha + i][navio2Coluna] == 3) {
-            printf("Erro: Navio 2 sobrepõe o Navio 1.\n");
-            return 1;
-        }
-    }
-
-    // Posiciona navio vertical
-    for (int i = 0; i < tamanhoNavio; i++) {
-        tabuleiro[navio2Linha + i][navio2Coluna] = 3;
-    }
-
-    // Verifica sobreposição antes de posicionar na diagonal principal
-    for (int i = 0; i < tamanhoNavio; i++) {
-        if (tabuleiro[navio3Linha + i][navio3Coluna - i] == 3) {
-        printf("Erro: Navio 3 sobrepõe outro Navio.\n");
-        return 1;
-     }
-    }
-
-    //posiciona o navio na diagonal principal
-    for (int i = 0; i < tamanhoNavio; i++) {
-        tabuleiro[navio3Linha + i][navio3Coluna + i] = 3;
-    }
-
-    // Verifica sobreposição antes de posicionar
-    for (int i = 0; i < tamanhoNavio; i++) {
-        if (tabuleiro[navio4Linha + i][navio4Coluna - i] == 3) {
-        printf("Erro: Navio 4 sobrepõe outro Navio.\n");
-        return 1;
-     }
-    }
-
-    //posiciona o navio na diagonal secundaria
-    for (int i = 0; i < tamanhoNavio; i++) {
-        tabuleiro[navio4Linha + i][navio4Coluna - i] = 3;
-    }
-
-    
-    printf("\n======= TABULEIRO BATALHA NAVAL =======\n\n");
-
-    // Cabeçalho com letras A-J
+void exibirTabuleiro() {
     printf("   ");
-    for (int j = 0; j < tamanhoTabuleiro; j++) {
-        printf("%c ", 'A' + j); // converte número para letra do alfabeto
-    }
+    for (int j = 0; j < TAM; j++) printf("%d ", j);
     printf("\n");
 
-    // Linhas com números + valores do tabuleiro
-    for (int i = 0; i < tamanhoTabuleiro; i++) {
-        printf("%2d ", i);
-        for (int j = 0; j < tamanhoTabuleiro; j++) {
+    for (int i = 0; i < TAM; i++) {
+        printf("%d |", i);
+        for (int j = 0; j < TAM; j++) {
             printf("%d ", tabuleiro[i][j]);
         }
         printf("\n");
     }
+}
 
-    printf("\nLegenda:\n0 = Água \n3 = Navio \n\n");
+// FUNÇÃO PARA POSICIONAR NAVIO
+int posicionarNavio(int linha, int coluna, int dLinha, int dColuna) {
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        int nl = linha + i * dLinha;
+        int nc = coluna + i * dColuna;
+        if (nl < 0 || nl >= TAM || nc < 0 || nc >= TAM) return 0;
+        if (tabuleiro[nl][nc] != 0) return 0;
+    }
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        tabuleiro[linha + i * dLinha][coluna + i * dColuna] = 3;
+    }
+    return 1;
+}
+
+// ======== SKILLS ========
+
+// Skill 1: Cone
+int skillCone[3][5] = {
+    {0, 0, 3, 0, 0},
+    {0, 3, 3, 3, 0},
+    {3, 3, 3, 3, 3}
+};
+
+// Skill 2: Cruz (+)
+int skillCruz[3][5] = {
+    {0, 0, 3, 0, 0},
+    {3, 3, 3, 3, 3},
+    {0, 0, 3, 0, 0}
+};
+
+// Skill 3: Octaedro (X)
+int skillOctaedro[3][5] = {
+    {0, 0, 3, 0, 0},
+    {0, 3, 3, 3, 0},
+    {0, 0, 3, 0, 0}
+};
+
+void aplicarSkill(int skill[3][5], int linha, int coluna) {
+
+    if (linha + 3 > TAM || coluna + 5 > TAM) {
+        printf("Skill fora do tabuleiro!\n");
+        return;
+    }
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 5; j++) {
+            if (skill[i][j] == 3) {
+                int nl = linha + i;
+                int nc = coluna + j;
+
+                if (tabuleiro[nl][nc] == 3)
+                    tabuleiro[nl][nc] = 1; // Acertou navio
+                else if (tabuleiro[nl][nc] == 0)
+                    tabuleiro[nl][nc] = 2; // Erro
+            }
+        }
+    }
+}
+
+int main() {
+    int linha, coluna, escolha;
+
+    // Posicionar navios (fixos)
+    posicionarNavio(2, 4, 0, 1);   // →
+    posicionarNavio(5, 7, 1, 0);   // ↓
+    posicionarNavio(0, 0, 1, 1);   // ↘
+    posicionarNavio(3, 7, 1, -1);  // ↙
+
+    printf("\n Tabuleiro inicial:\n");
+    exibirTabuleiro();
+
+    printf("\n Escolha sua Skill:\n");
+    printf("1 - Cone\n");
+    printf("2 - Cruz\n");
+    printf("3 - Octaedro\n");
+    scanf("%d", &escolha);
+
+    printf("\nInforme a linha e coluna de ataque: ");
+    scanf("%d %d", &linha, &coluna);
+
+    switch (escolha) {
+        case 1: aplicarSkill(skillCone, linha, coluna); break;
+        case 2: aplicarSkill(skillCruz, linha, coluna); break;
+        case 3: aplicarSkill(skillOctaedro, linha, coluna); break;
+        default: printf("Opção inválida!\n"); return 0;
+    }
+
+    printf("\n Tabuleiro após skill:\n");
+    exibirTabuleiro();
 
     return 0;
 }
